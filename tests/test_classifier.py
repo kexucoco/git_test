@@ -49,8 +49,9 @@ def test_data_shape(iris_data):
 def test_model_accuracy(model, split_data):
     X_train, X_test, y_train, y_test = split_data
     y_train_ohe = to_categorical(y_train)
+    y_test_ohe = to_categorical(y_test)
     model.fit(X_train, y_train_ohe, epochs=10, batch_size=1)
-    loss, accuracy = model.evaluate(X_test, y_train_ohe, batch_size=1)
+    loss, accuracy = model.evaluate(X_test, y_test_ohe, batch_size=1)
     assert accuracy > 0.2
 
 
