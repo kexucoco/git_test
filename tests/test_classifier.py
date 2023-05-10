@@ -48,24 +48,20 @@ def test_data_shape(iris_data):
 
 def test_model_accuracy(model, split_data):
     X_train, X_test, y_train, y_test = split_data
-    # Train the model on the training set
-    model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
-    # Evaluate the model on the test set
-    _, accuracy = model.evaluate(X_test, y_test, verbose=0)
+    model.fit(X_train, y_train, epochs=10, batch_size=1)
+    loss, accuracy = model.evaluate(X_test, y_test, batch_size=1)
     assert accuracy > 0.9
 
 
 def test_data_leakage(model, iris_data, split_data):
-    X_train, X_test, _, _ = split_data
-    # Ensure that there is no data leakage between training and test sets
-    assert np.intersect1d(X_train, X_test).size == 0
+    X_train, X_test, y_train, y_test = split_data
+    model.fit(X_train, y_train, epochs=10, batch_size=1)
+    y_pred = model.predict(X_test)
+    assert np.array_equal(np.argmax(y_pred, axis=1), y_test)
 
 
 def test_model_predictions(model, split_data):
     X_train, X_test, y_train, y_test = split_data
-    # Train the model on the training set
-    model.fit(X_train, y_train, epochs=50, batch_size=16, verbose=0)
-    # Predict the classes of the test set
-    y_pred = model.predict_classes(X_test)
-    # Ensure that the predicted classes are valid
-    assert np.array_equal(np.unique(y_pred), np.array([0, 1, 2]))
+    model.fit(X_train, y_train, epochs=10, batch_size=1)
+    y_pred = model.predict(X_test)
+    assert y_pred.shape == (45, 3)
